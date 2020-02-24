@@ -13,13 +13,18 @@ namespace ForestHome.Controllers
 {
     public class AccountController : Controller
     {
+        // GET: Home
+        public ActionResult Home()
+        {
+            return View();
+        }
         // GET: Account
         public ActionResult Index()
         {
             return View();
         }
 
-        public ActionResult Register()
+        public ActionResult Register() //get the email verification /forget password /add Date time
         {
             return View();
         }
@@ -27,9 +32,16 @@ namespace ForestHome.Controllers
         [HttpPost]
         public ActionResult SaveRegisterDetails(Register rgstr)
         {
-            if (ModelState.IsValid)
+            using (var databaseContext = new ForestEntities1())
+
+                if (databaseContext.Users.Any(x => x.Email == rgstr.Email))
+                {
+                    ViewBag.DuplicateMessage = "Email already exist";
+                    return View("Register");
+                }
+            using (var databaseContext = new ForestEntities1())
             {
-                using (var databaseContext = new ForestEntities())
+                if (ModelState.IsValid)
                 {
                     User reglog = new User();
 
@@ -40,18 +52,19 @@ namespace ForestHome.Controllers
 
                     databaseContext.Users.Add(reglog);
                     databaseContext.SaveChanges();
+
+
+                    ViewBag.Message = "YOU HAVE REGISTER SUCCESSFULLY";
+                    return View("Register");
+                }
+                else
+                {
+                    return View("Register", rgstr);
                 }
 
-                ViewBag.Message = "User Details Saved";
-                return View("Register");
-            }
-            else
-            {
-                return View("Register", rgstr);
             }
         }
-
-        public ActionResult Login()
+            public ActionResult Login()
         {
             return View();
         }
@@ -70,7 +83,7 @@ namespace ForestHome.Controllers
                     FormsAuthentication.SetAuthCookie(model.Email, false);
                     return RedirectToAction("Index");
                 }
-                else
+                else  
                 {
                     ModelState.AddModelError("Failure", "Wrong Username and Password combination");
                     return View();
@@ -83,10 +96,10 @@ namespace ForestHome.Controllers
         }
         public User IsValidUser(LoginViewModel model)
         {
-            using (var dataContext = new ForestEntities())
+            using (var dataContext = new ForestEntities1())
             {
                 var _passWord = PasswordEncrypt.TextToEncrypt(model.Password);
-                User user = dataContext.Users.Where(query => query.Email == model.Email && query.Password == _passWord).SingleOrDefault();
+                User user = dataContext.Users.Where(X => X.Email == model.Email && X.Password == _passWord).SingleOrDefault();
 
                 if (user == null)
                     return null;
@@ -99,7 +112,7 @@ namespace ForestHome.Controllers
             {
             FormsAuthentication.SignOut();
             Session.Abandon();
-            return RedirectToAction("Index");
+            return RedirectToAction("Home");
             }
 
         }

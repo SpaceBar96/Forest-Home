@@ -1,18 +1,22 @@
-﻿
+﻿@*@model ForestHome.ViewModel.LoginViewModel*@
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
 
 @if (Request.IsAuthenticated)
 {
-
+    <h2>Hi, Successfully login</h2>
     <span>Welcome @Html.Encode(User.Identity.Name) </span>
+    <br />
+
+    <th>
+        @Html.ActionLink("Student Page", "Student", "Student")
+    </th>
 }
 else
 {
-
+    <h2>Please try again</h2>
     @Html.ActionLink("Login", "Login", "Account")
     <br />
 

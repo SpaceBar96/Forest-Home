@@ -13,10 +13,10 @@ namespace ForestHome.DBModel
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class ForestEntities : DbContext
+    public partial class ForestEntities1 : DbContext
     {
-        public ForestEntities()
-            : base("name=ForestEntities")
+        public ForestEntities1()
+            : base("name=ForestEntities1")
         {
         }
     
@@ -26,5 +26,6 @@ namespace ForestHome.DBModel
         }
     
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Student> Students { get; set; }
     }
 }
